@@ -39,3 +39,5 @@ that finally ends.)-
 #R"(This is a long string,
 	full of bad stuff like \ ' " \" \n ) ( etc.
 that finally ends.)"
+
+(exit (test-runner-fail-count (test-runner-current)))
