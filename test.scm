@@ -30,14 +30,18 @@
 (test-equal "thest|\\\"ring" #Rxxx(thest|\"ring)xxx)
 (test-equal "thestring)xxyTHENMORE" #Rxxx(thestring)xxyTHENMORE)xxx)
 (test-equal "zero(\\prefix" #R(zero(\prefix))
+(test-equal "hello" #R"hello")
+(test-equal "(hello)" #R"(hello)")
+(test-equal "\"hello\"" #R("hello"))
+(test-equal "(hello)" #R[(hello)])
 (test-end "raw-strings")
 
 #R-(This is a long string,
 	full of bad stuff like \ ' " \" \n ) ( etc.
 that finally ends.)-
 
-#R"(This is a long string,
+#R-"This is a long string,
 	full of bad stuff like \ ' " \" \n ) ( etc.
-that finally ends.)"
+that finally ends."-
 
 (exit (test-runner-fail-count (test-runner-current)))
