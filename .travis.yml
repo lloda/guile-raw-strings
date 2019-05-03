@@ -1,0 +1,14 @@
+
+dist: xenial
+sudo: required
+
+script:
+ - (guile -L . test.scm)
+
+matrix:
+  include:
+   - os: linux
+     addons:
+       apt:
+         packages:
+           - guile-2.0

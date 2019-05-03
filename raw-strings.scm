@@ -5,15 +5,15 @@
 
 ;; After R"delimiter( raw_characters )delimiter"
 ;; in http://en.cppreference.com/w/cpp/language/string_literal.
-;; The quotes seem unnecessary, so I consider them part of the delimiter; you can ellide them.
-;; The characters ( ) can also be [ ] or " ".
+;; Having #R The quotes seemed unnecessary, so I consider them part of the
+;; delimiter; you can ellide them. The characters ( ) can also be [ ] or " ".
 
 (define-module (raw-strings)
   #:use-module ((ice-9 rdelim)))
 
-(define delim-begin "([\"")
-
 (define (reader-extension-raw-string chr port)
+; open-close choices
+  (define delim-begin "([\"")
   (define (char-please port)
     (let ((c (read-char port)))
       (if (eof-object? c)
@@ -22,6 +22,7 @@
   (let* ((fix-open (read-delimited delim-begin port 'split))
          (fix (car fix-open))
          (open (cdr fix-open))
+; match open-close characters
          (close (case open
                   ((#\() #\)) ((#\[) #\]) ((#\") #\")
                   (else (throw 'raw-string-delimiter-not-found fix)))))
