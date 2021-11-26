@@ -1,5 +1,5 @@
 
-; (c) Daniel Llorens 2017
+; (c) Daniel Llorens 2017, 2021
 ; Test reader extension for raw strings
 
 ;; This library is free software; you can redistribute it and/or modify it under
@@ -34,7 +34,6 @@
 (test-equal "(hello)" #R"(hello)")
 (test-equal "\"hello\"" #R("hello"))
 (test-equal "(hello)" #R[(hello)])
-(test-end "raw-strings")
 
 #R-(This is a long string,
 	full of bad stuff like \ ' " \" \n ) ( etc.
@@ -44,4 +43,6 @@ that finally ends.)-
 	full of bad stuff like \ ' " \" \n ) ( etc.
 that finally ends."-
 
-(exit (test-runner-fail-count (test-runner-current)))
+(define error-count (test-runner-fail-count (test-runner-current)))
+(test-end "raw-strings")
+(exit error-count)
