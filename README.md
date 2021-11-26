@@ -28,11 +28,11 @@ The open-close pair must be matched, but the delimiter must be repeated verbatim
 * `#R]"hello"]` ⇒ `hello` —here the delimiter is `]` and the open-close pair is `""`.
 * `#R["hello"]` ⇒ `"hello"` —here the delimiter is empty and the open-close pair is `[]`.
 
-To enable the extension, install `raw-strings.scm` in your module path and then ``(import (raw-strings))``, or simply paste the code in `raw-strings.scm` in your `~/.guile`.
+To enable the extension, install `mod/raw-strings.scm` in your module path and then ``(import (raw-strings))``.
 
 Run the test with
 
-    guile -L . -s test.scm
+    $GUILE -L mod -s test.scm
 
 I hope you find this useful.
 
