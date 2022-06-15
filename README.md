@@ -1,7 +1,4 @@
-
-# ![(travis build status)](https://travis-ci.org/lloda/guile-raw-strings.svg?branch=master) #
-
-The file `raw-strings.scm` contains a reader extension that lets you write verbatim strings such as
+`guile-raw-strings` is a reader extension that lets you write verbatim strings such as
 
     #R-(quotes " and escapes \ and newlines
                can " freely be used " here)-
@@ -35,6 +32,12 @@ Run the test with
     $GUILE -L mod -s test.scm
 
 I hope you find this useful.
+
+## References
+
+* *Raw string literal* in <https://en.cppreference.com/w/cpp/language/string_literal>
+* <https://docs.racket-lang.org/axe/index.html#%28part._raw-string%29>
+* *raw strings* in <https://docs.python.org/3/reference/lexical_analysis.html>
 
 —
 
