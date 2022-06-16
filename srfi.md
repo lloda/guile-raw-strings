@@ -26,7 +26,7 @@ Raw string literals use configurable delimiters as an alternative to the escapin
 
 * Should more than one OPEN/CLOSE pair be offered, or be configurable?
 
-The reference implementation allows `"`/`"`,`(`/`)`, and `[`/`]`. This has the advantage that one may pick `(`/`)` when the string has `"` in it and so on, the way `'` and `"` are mixed in some languages, without having to add a delimiter.
+The sample implementation allows `"`/`"`,`(`/`)`, and `[`/`]`. This has the advantage that one may pick `(`/`)` when the string has `"` in it and so on, the way `'` and `"` are mixed in some languages, without having to add a delimiter.
 
 * Should the literal prefix character be something different from `#R`?
 
@@ -39,7 +39,7 @@ The standard string literal syntax [1] uses the character `"` as delimiter, whic
 
 With raw string literals, the delimiter can be different for each string literal. One is free to choose a delimiter that doesn't appear in the string, which removes the need for escapes entirely.
 
-Raw string literals are present in other languages [2, 3] and in some Schemes as a non-standard syntax extension [4]. The present proposal is based mostly on [2], where the delimiter may be choosen freely. The prefix `#R` is used to avoid incompatibilities with existing syntax and to simplify implementation. This prefix is not claimed by any previous SRFI.
+Raw string literals are present in other languages [2, 3] and in some Schemes as a non-standard syntax extension [4]. The present proposal is based mostly on [2], where the delimiter may be choosen freely. The prefix `#R` is used to avoid incompatibilities with existing syntax and to simplify implementation. This prefix has not been claimed in any previous SRFI.
 
 
 ## Specification
@@ -51,12 +51,12 @@ A raw string literal is a sequence of characters made of the following blocks, w
 * `#R` are the two literal characters `#R`.
 * OPEN is the character `"`.
 * CLOSE is the character `"`.
-* DELIMITER is an arbitrary sequence of characters other than whitespace, OPEN, or CLOSE. DELIMITER may be an empty sequence.
+* DELIMITER is an sequence of characters excluding control characters, whitespace, OPEN, or CLOSE. DELIMITER may be an empty sequence.
 * STRING is a sequence of characters where the sequence CLOSE DELIMITER does not apear.
 
 OPEN, CLOSE, and DELIMITER may appear freely in STRING as long as the sequence CLOSE DELIMITER does not.
 
-The raw string literal evaluates to the string STRING.
+The raw string literal evaluates to a string containing the sequence of characters in STRING.
 
 ### Examples
 
@@ -94,11 +94,9 @@ A longer example with newlines, using `|` as delimiter.
 
     "quotes \" and escapes \\ and newlines\n   can \" freely be used \" here"
 
-"\(^\|[^0-9]+\)\.\([[:digit:]]+\)"
-
 ## Implementation
 
-The implementation for Guile <https://github.com/lloda/guile-raw-strings> uses a reader extension.
+The sample implementation for Guile <https://github.com/lloda/guile-raw-strings> uses a reader extension.
 
 ## References
 
