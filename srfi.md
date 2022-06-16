@@ -1,3 +1,6 @@
+<!-- -*- mode: markdown; coding: utf-8 -*- -->
+<!-- after https://srfi.schemers.org/srfi-template.html -->
+
 <head>
   <style>
     code {
@@ -11,7 +14,6 @@
     }
   </style>
 </head>
-<!-- https://srfi.schemers.org/srfi-template.html -->
 
 # SRFI-??? - Raw string literals
 
@@ -22,9 +24,13 @@ Raw string literals use configurable delimiters as an alternative to the escapin
 
 ## Issues
 
-* Should more than one OPEN/CLOSE pair be offered? The reference implementation allows `"`/`"`,`(`/`)`, and `[`/`]`. This has the advantage that one may pick `(`/`)` when the string has `"` in it and so on, the way `'` and `"` are mixed in some languages, without having to add a delimiter.
-* Should the open OPEN/CLOSE pair be configurable?
-* Should the type character be something different from `r`. C++ raw string literals use `R`. Python uses `r`. Lower case seems more in line with common Scheme practice, e.g. SRFI-4. Case insensitive Schemes would accept either.
+* Should more than one OPEN/CLOSE pair be offered, or be configurable?
+
+The reference implementation allows `"`/`"`,`(`/`)`, and `[`/`]`. This has the advantage that one may pick `(`/`)` when the string has `"` in it and so on, the way `'` and `"` are mixed in some languages, without having to add a delimiter.
+
+* Should the literal prefix character be something different from `#R`?
+
+C++ raw string literals use `R`. Python uses `r`. Lower case seems more in line with common Scheme practice, e.g. SRFI-4.
 
 
 ## Rationale
@@ -33,16 +39,16 @@ The standard string literal syntax [1] uses the character `"` as delimiter, whic
 
 With raw string literals, the delimiter can be different for each string literal. One is free to choose a delimiter that doesn't appear in the string, which removes the need for escapes entirely.
 
-Raw string literals are present in other languages [2, 3] and in some Schemes as non-standard syntax extensions [4]. The present proposal is based mostly on [2], where the delimiter may be choosen freely. It uses the prefix `#r` to avoid incompatibilities with existing syntax, and to simplify implementation. This prefix has not been claimed in any previous SRFI.
+Raw string literals are present in other languages [2, 3] and in some Schemes as a non-standard syntax extension [4]. The present proposal is based mostly on [2], where the delimiter may be choosen freely. The prefix `#R` is used to avoid incompatibilities with existing syntax and to simplify implementation. This prefix is not claimed by any previous SRFI.
 
 
 ## Specification
 
 A raw string literal is a sequence of characters made of the following blocks, with nothing between them.
 
->  `#r` DELIMITER OPEN STRING CLOSE DELIMITER
+>  `#R` DELIMITER OPEN STRING CLOSE DELIMITER
 
-* `#r` are the two literal characters `#r`.
+* `#R` are the two literal characters `#R`.
 * OPEN is the character `"`.
 * CLOSE is the character `"`.
 * DELIMITER is an arbitrary sequence of characters other than whitespace, OPEN, or CLOSE. DELIMITER may be an empty sequence.
@@ -56,28 +62,28 @@ The raw string literal evaluates to the string STRING.
 
 Using an empty DELIMITER:
 
-* `#r"hello"`  ⇒ `"hello"`
-* `#r"hel\lo"`  ⇒ `"hel\\lo"`
+* `#R"hello"`  ⇒ `"hello"`
+* `#R"hel\lo"`  ⇒ `"hel\\lo"`
 
 Using `-` as DELIMITER:
 
-* `#r-"hel\"lo"-`  ⇒ `"hel\\\"lo"`
-* `#r-"he-l\"lo"-`  ⇒ `"he-l\\\"lo"`
-* `#r-"he-"l\"lo"-`  ⇒ `"he-\"l\\\"lo"`
-* `#r-"he-"-`  ⇒ `"he-"`
-* `#r-"he-""-`  ⇒ `"he-\""` ← <red>bug in reference impl</red>
-* `#r-"he-"""-`  ⇒ `"he-\"\""`
+* `#R-"hel\"lo"-`  ⇒ `"hel\\\"lo"`
+* `#R-"he-l\"lo"-`  ⇒ `"he-l\\\"lo"`
+* `#R-"he-"l\"lo"-`  ⇒ `"he-\"l\\\"lo"`
+* `#R-"he-"-`  ⇒ `"he-"`
+* `#R-"he-""-`  ⇒ `"he-\""`
+* `#R-"he-"""-`  ⇒ `"he-\"\""`
 
 Using `***` as DELIMITER:
 
-* `#r***"hel\"lo"***`  ⇒ `"hel\\\"lo"`
-* `#r***"he***l\"lo"***`  ⇒ `"he***l\\\"lo"`
-* `#r***"he***"l\"lo"***`  ⇒ `"he***\"l\\\"lo"`
-* `#r***"he***"**"***`  ⇒ `"he***\"**"` ← <red>bug in reference impl</red>
-* `#r***"he***"**""***`  ⇒ `"he***\"**\""`
-* `#r***"he***"***`  ⇒ `"he-\""`
-* `#r***"he***""***`  ⇒ `"he-\""` ← <red>bug in reference impl</red>
-* `#r***"he***"""***`  ⇒ `"he-\"\""`
+* `#R***"hel\"lo"***`  ⇒ `"hel\\\"lo"`
+* `#R***"he***l\"lo"***`  ⇒ `"he***l\\\"lo"`
+* `#R***"he***"l\"lo"***`  ⇒ `"he***\"l\\\"lo"`
+* `#R***"he***"**"***`  ⇒ `"he***\"**"`
+* `#R***"he***"**""***`  ⇒ `"he***\"**\""`
+* `#R***"he***"***`  ⇒ `"he***"`
+* `#R***"he***""***`  ⇒ `"he***\""`
+* `#R***"he***"""***`  ⇒ `"he***\"\""`
 
 A longer example with newlines, using `|` as delimiter.
 
@@ -88,12 +94,11 @@ A longer example with newlines, using `|` as delimiter.
 
     "quotes \" and escapes \\ and newlines\n   can \" freely be used \" here"
 
+"\(^\|[^0-9]+\)\.\([[:digit:]]+\)"
 
 ## Implementation
 
-The following implementation for Guile <https://github.com/lloda/guile-raw-strings> uses a reader extension.
-
-## Acknoledgements
+The implementation for Guile <https://github.com/lloda/guile-raw-strings> uses a reader extension.
 
 ## References
 

@@ -1,5 +1,5 @@
-
-; (c) Daniel Llorens 2017, 2021
+; -*- mode: scheme; coding: utf-8 -*-
+; (c) Daniel Llorens 2017, 2022
 ; Test reader extension for raw strings
 
 ;; This library is free software; you can redistribute it and/or modify it under
@@ -34,6 +34,12 @@
 (test-equal "(hello)" #R"(hello)")
 (test-equal "\"hello\"" #R("hello"))
 (test-equal "(hello)" #R[(hello)])
+(test-equal #R-"he-""- "he-\"")
+(test-equal #R-(he-))- "he-)")
+(test-equal #R-(he-)))- "he-))")
+(test-equal #R-(he-()- "he-(")
+(test-equal #R***"he***"**"*** "he***\"**")
+(test-equal #R***"he***""*** "he***\"")
 
 #R-(This is a long string,
 	full of bad stuff like \ ' " \" \n ) ( etc.
