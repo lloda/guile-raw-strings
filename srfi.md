@@ -17,30 +17,35 @@
 
 ## Abstract
 
-The goal of this SRFI is to offer a common syntax for ‘raw string’ literals. Raw string literals offer configurable delimiters as an alternative for the escaping syntax using in the standard string literals.
+Raw string literals use configurable delimiters as an alternative to the escaping syntax using in the standard string literals. The goal of this SRFI is to offer a common syntax for these literals.
 
 
 ## Issues
 
-* Should OPEN and CLOSE be configurable. Author thinks *no*.
-* Should the type character be something different from `R`. C++ raw string literals use `R`. Python uses `r`.
+* Should more than one OPEN/CLOSE pair be offered? The reference implementation allows `"`/`"`,`(`/`)`, and `[`/`]`. This has the advantage that one may pick `(`/`)` when the string has `"` in it and so on, the way `'` and `"` are mixed in some languages, without having to add a delimiter.
+* Should the open OPEN/CLOSE pair be configurable?
+* Should the type character be something different from `r`. C++ raw string literals use `R`. Python uses `r`. Lower case seems more in line with common Scheme practice, e.g. SRFI-4. Case insensitive Schemes would accept either.
 
 
 ## Rationale
 
-Raw string literals make it easier to write (and read) strings containing newlines, quotes `"`), or escape characters `\`, for example those used in writing regular expressions, or when quoting code. Escaping can easily get out of hand when there is more than one level of quoting involved.
+The standard string literal syntax [1] uses the character `"` as delimiter, which needs to be escaped when it's part of the string. The escape character `\` must itself be escaped. Escaping can easily get out of hand when there is more than one level of escaping or quoting involved, e.g. when writing regular expressions.
+
+With raw string literals, the delimiter can be different for each string literal. One is free to choose a delimiter that doesn't appear in the string, which removes the need for escapes entirely.
+
+Raw string literals are present in other languages [2, 3] and in some Schemes as non-standard syntax extensions [4]. The present proposal is based mostly on [2], where the delimiter may be choosen freely. It uses the prefix `#r` to avoid incompatibilities with existing syntax, and to simplify implementation. This prefix has not been claimed in any previous SRFI.
 
 
 ## Specification
 
-A raw string literal is a sequence of characters with the following components and nothing between them.
+A raw string literal is a sequence of characters made of the following blocks, with nothing between them.
 
->  `#R` DELIMITER OPEN STRING CLOSE DELIMITER
+>  `#r` DELIMITER OPEN STRING CLOSE DELIMITER
 
-* `#R` are the two literal characters `#R`.
-* DELIMITER is an arbitrary sequence of characters other than whitespace, OPEN, or CLOSE. DELIMITER may be an empty sequence.
+* `#r` are the two literal characters `#r`.
 * OPEN is the character `"`.
 * CLOSE is the character `"`.
+* DELIMITER is an arbitrary sequence of characters other than whitespace, OPEN, or CLOSE. DELIMITER may be an empty sequence.
 * STRING is a sequence of characters where the sequence CLOSE DELIMITER does not apear.
 
 OPEN, CLOSE, and DELIMITER may appear freely in STRING as long as the sequence CLOSE DELIMITER does not.
@@ -51,33 +56,38 @@ The raw string literal evaluates to the string STRING.
 
 Using an empty DELIMITER:
 
-* `#R"hello"`  ⇒ `"hello"`
-* `#R"hel\lo"`  ⇒ `"hel\\lo"`
-* `
-#R"hel
-lo"
-`
-⇒ `"hel\nlo"` ← <red>GH doesn't show the newline in the quoted literal</red>
+* `#r"hello"`  ⇒ `"hello"`
+* `#r"hel\lo"`  ⇒ `"hel\\lo"`
 
 Using `-` as DELIMITER:
 
-* `#R-"hel\"lo"-`  ⇒ `"hel\\\"lo"`
-* `#R-"he-l\"lo"-`  ⇒ `"he-l\\\"lo"`
-* `#R-"he-"l\"lo"-`  ⇒ `"he-\"l\\\"lo"`
-* `#R-"he-"-`  ⇒ `"he-"`
-* `#R-"he-""-`  ⇒ `"he-\""` ← <red>bug in reference impl</red>
-* `#R-"he-"""-`  ⇒ `"he-\"\""`
+* `#r-"hel\"lo"-`  ⇒ `"hel\\\"lo"`
+* `#r-"he-l\"lo"-`  ⇒ `"he-l\\\"lo"`
+* `#r-"he-"l\"lo"-`  ⇒ `"he-\"l\\\"lo"`
+* `#r-"he-"-`  ⇒ `"he-"`
+* `#r-"he-""-`  ⇒ `"he-\""` ← <red>bug in reference impl</red>
+* `#r-"he-"""-`  ⇒ `"he-\"\""`
 
 Using `***` as DELIMITER:
 
-* `#R***"hel\"lo"***`  ⇒ `"hel\\\"lo"`
-* `#R***"he***l\"lo"***`  ⇒ `"he***l\\\"lo"`
-* `#R***"he***"l\"lo"***`  ⇒ `"he***\"l\\\"lo"`
-* `#R***"he***"**"***`  ⇒ `"he***\"**"` ← <red>bug in reference impl</red>
-* `#R***"he***"**""***`  ⇒ `"he***\"**\""`
-* `#R***"he***"***`  ⇒ `"he-\""`
-* `#R***"he***""***`  ⇒ `"he-\""` ← <red>bug in reference impl</red>
-* `#R***"he***"""***`  ⇒ `"he-\"\""`
+* `#r***"hel\"lo"***`  ⇒ `"hel\\\"lo"`
+* `#r***"he***l\"lo"***`  ⇒ `"he***l\\\"lo"`
+* `#r***"he***"l\"lo"***`  ⇒ `"he***\"l\\\"lo"`
+* `#r***"he***"**"***`  ⇒ `"he***\"**"` ← <red>bug in reference impl</red>
+* `#r***"he***"**""***`  ⇒ `"he***\"**\""`
+* `#r***"he***"***`  ⇒ `"he-\""`
+* `#r***"he***""***`  ⇒ `"he-\""` ← <red>bug in reference impl</red>
+* `#r***"he***"""***`  ⇒ `"he-\"\""`
+
+A longer example with newlines, using `|` as delimiter.
+
+    #R|"quotes " and escapes \ and newlines
+       can " freely be used " here"|
+
+⇒
+
+    "quotes \" and escapes \\ and newlines\n   can \" freely be used \" here"
+
 
 ## Implementation
 
@@ -87,9 +97,10 @@ The following implementation for Guile <https://github.com/lloda/guile-raw-strin
 
 ## References
 
-* *Raw string literal* in <https://en.cppreference.com/w/cpp/language/string_literal>
-* <https://docs.racket-lang.org/axe/index.html#%28part._raw-string%29>
-* *raw strings* in <https://docs.python.org/3/reference/lexical_analysis.html>
+1. Revised⁵ Report on the Algorithmic Language Scheme, Feb. 1998. §6.3.5: Strings.
+2. *Raw string literal* in <https://en.cppreference.com/w/cpp/language/string_literal>
+4. *raw strings* in <https://docs.python.org/3/reference/lexical_analysis.html>
+3. <https://docs.racket-lang.org/axe/index.html#%28part._raw-string%29>
 
 ## Copyright
 
