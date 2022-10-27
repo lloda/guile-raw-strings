@@ -24,13 +24,15 @@ Raw string literals use configurable delimiters as an alternative to the escapin
 
 ## Issues
 
+* See [9] for some discussion. <red>Needs stronger rationale to go there again.</red>
+
 * Should more than one OPEN/CLOSE pair be offered, or be configurable?
 
-The sample implementation allows `"`/`"`,`(`/`)`, and `[`/`]`. This has the advantage that one may pick `(`/`)` when the string has `"` in it and so on, the way `'` and `"` are mixed in some languages, without having to add a delimiter.
+The sample implementation allows `"`/`"`,`(`/`)`, and `[`/`]`. This has the advantage that one may pick `(`/`)` when the string has `"` in it and so on, the way `'` and `"` are mixed in some languages, without having to add a delimiter. Also using matched characters and not the same might be somewhat clearer. SRFI-109 uses `{`/`}`.
 
 * Should the literal prefix character be something different from `#R`?
 
-C++ raw string literals use `R`. Python uses `r`. Lower case seems more in line with common Scheme practice, e.g. SRFI-4.
+C++ raw string literals use `R`. Python uses `r`. Presumably this is for ‘raw’. Lower case seems more in line with Scheme practice. It is noted that `#r` is used in s7 Scheme [7] with a different meaning.
 
 
 ## Rationale
@@ -39,7 +41,9 @@ The standard string literal syntax [1] uses the character `"` as delimiter, whic
 
 With raw string literals, the delimiter can be different for each string literal. One is free to choose a delimiter that doesn't appear in the string, which removes the need for escapes entirely.
 
-Raw string literals are present in other languages [2, 3] and in some Schemes as a non-standard syntax extension [4]. The present proposal is based mostly on [2], where the delimiter may be choosen freely. The prefix `#R` is used to avoid incompatibilities with existing syntax and to simplify implementation. This prefix has not been claimed in any previous SRFI.
+Raw string literals are present in other languages [4, 5] and in some Schemes as a non-standard syntax extension [6, 8]. SRFI-109 [2] provides an extension to the string literal syntax that can remove the need for escapes in most cases. The syntax `&{` STRING `}` proposed there is similar to the syntax `#R"` STRING `"` proposed here. SRFI-109 still needs to handle escapes, and adds its own for newlines, substitutions, named characters, and so on. A syntax with user-defined delimiters is described, `&!` DELIMITER `{` STRING `}` DELIMITER, which is again similar to the syntax `#R` DELIMITER `"` STRING `"` DELIMITER described here. It is unclear if all the special escapes are also supported in this case. Chicken Scheme [6] offers the syntax `#<<` DELIMITER NEWLINE STRING NEWLINE DELIMITER NEWLINE for ‘multiline string constants’, and a variant using `#<#` that allows for escapes and substitutions, as SRFI-190 does.
+
+The prefix `#R` is used to avoid incompatibilities with existing syntax and to simplify implementation. This proposal could be made substantially compatible with SRFI-109 by using `{`/`}` for OPEN/CLOSE, using `&` as prefix instead of `#R`, and requiring any non-empty user defined DELIMITER to start with `!`. But the convention of using `&` for extended literals, used in SRFI-107, 108 and 109, has not been adopted generally, and those SRFIs are supported only in one implementation, while most Schemes support extended literals starting with `#`.
 
 
 ## Specification
@@ -56,7 +60,7 @@ A raw string literal is a sequence of characters made of the following blocks, w
 
 OPEN, CLOSE, and DELIMITER may appear freely in STRING as long as the sequence CLOSE DELIMITER does not.
 
-The raw string literal evaluates to a string containing the sequence of characters in STRING.
+The raw string literal evaluates to a string containing the sequence of characters in STRING verbatim. No escapes are supported.
 
 ### Examples
 
@@ -101,9 +105,15 @@ The sample implementation for Guile <https://github.com/lloda/guile-raw-strings>
 ## References
 
 1. Revised⁵ Report on the Algorithmic Language Scheme, Feb. 1998. §6.3.5: Strings.
-2. *Raw string literal* in <https://en.cppreference.com/w/cpp/language/string_literal>
-4. *raw strings* in <https://docs.python.org/3/reference/lexical_analysis.html>
-3. <https://docs.racket-lang.org/axe/index.html#%28part._raw-string%29>
+2. Per Bothner, SRFI-109: Extended string quasi-literals, 2013. <https://srfi.schemers.org/srfi-109/srfi-109.html>
+3. Scheme registry: # lexical syntax. <https://registry.scheme.org/#hash-syntax>
+4. *Raw string literal* in <https://en.cppreference.com/w/cpp/language/string_literal>
+5. *raw strings* in <https://docs.python.org/3/reference/lexical_analysis.html>
+6. <https://docs.racket-lang.org/axe/index.html#%28part._raw-string%29>
+7. s7: A Scheme implementation. <https://ccrma.stanford.edu/software/snd/snd/s7.html>
+8. Chicken Scheme: Non-standard read syntax. <https://wiki.call-cc.org/man/5/Extensions%20to%20the%20standard>
+9. SchemeCrossReference: Final SRFIs and their support. <https://practical-scheme.net/wiliki/schemexref.cgi?SRFI>
+9. Discussion at `srfi-discuss@srfi.schemers.org`: <https://srfi-email.schemers.org/srfi-discuss/msg/20089402/>
 
 ## Copyright
 

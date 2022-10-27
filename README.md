@@ -18,10 +18,10 @@ You can also use `[]` or `""` instead of `()` to ‘delimit the delimiter’<sup
 * `#R[hello]`  ⇒ `hello`
 * `#Rdo-not-repeat(hello)do-not-repeat`  ⇒ `hello`
 
-The open-close pair must be matched, but the delimiter must be repeated verbatim. It's probably better to stick to one style throughout.
+The open-close pair must be matched, but the delimiter must be repeated verbatim.
 
 * `#R("hello")`  ⇒ `"hello"` —empty delimiter, open-close-pair is `()`.
-* `#R"(hello)"`  ⇒ `(hello)` —in an earlier version of this, `""` wasn't an open-close pair, so this gave `hello`.
+* `#R"(hello)"`  ⇒ `(hello)` —since `""` is an open-close pair, this also has an empty delimiter.
 * `#R]"hello"]` ⇒ `hello` —here the delimiter is `]` and the open-close pair is `""`.
 * `#R["hello"]` ⇒ `"hello"` —here the delimiter is empty and the open-close pair is `[]`.
 
@@ -35,10 +35,15 @@ I hope you find this useful.
 
 ## References
 
-* *Raw string literal* in <https://en.cppreference.com/w/cpp/language/string_literal>
-* <https://docs.racket-lang.org/axe/index.html#%28part._raw-string%29>
-* *raw strings* in <https://docs.python.org/3/reference/lexical_analysis.html>
+1. Revised⁵ Report on the Algorithmic Language Scheme, Feb. 1998. §6.3.5: Strings.
+2. Per Bothner, SRFI-109: Extended string quasi-literals, 2013. <https://srfi.schemers.org/srfi-109/srfi-109.html>
+3. Scheme registry: # lexical syntax. <https://registry.scheme.org/#hash-syntax>
+4. *Raw string literal* in <https://en.cppreference.com/w/cpp/language/string_literal>
+5. *raw strings* in <https://docs.python.org/3/reference/lexical_analysis.html>
+6. <https://docs.racket-lang.org/axe/index.html#%28part._raw-string%29>
+7. s7: A Scheme implementation. <https://ccrma.stanford.edu/software/snd/snd/s7.html>
+8. Chicken Scheme: Non-standard read syntax. <https://wiki.call-cc.org/man/5/Extensions%20to%20the%20standard>
 
 —
 
-<b id="f1">¹</b> Check the comments in `raw-strings.scm` if you want to customize this list. [↩](#a1)
+<b id="f1">¹</b> You can configure the open-close pairs, as well as the extension character `R`, with the variables `openc`, `closec` and `extension-char` at the top of the source. A single open-close pair seems preferable, if everyone agrees on what that should be. [↩](#a1)
