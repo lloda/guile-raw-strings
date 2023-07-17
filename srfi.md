@@ -55,7 +55,7 @@ A raw string literal is a sequence of characters made of the following blocks, w
 * `#R` are the two literal characters `#R`.
 * OPEN is the character `"`.
 * CLOSE is the character `"`.
-* DELIMITER is an sequence of characters excluding control characters, whitespace, OPEN, or CLOSE. DELIMITER may be an empty sequence.
+* DELIMITER is a sequence of characters excluding control characters, whitespace, OPEN, or CLOSE. DELIMITER may be an empty sequence.
 * STRING is a sequence of characters where the sequence CLOSE DELIMITER does not apear.
 
 OPEN, CLOSE, and DELIMITER may appear freely in STRING as long as the sequence CLOSE DELIMITER does not.

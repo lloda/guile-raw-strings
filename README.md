@@ -1,4 +1,7 @@
-`guile-raw-strings` is a reader extension that lets you write verbatim strings such as
+
+# guile-raw-strings [![guile-3.0](https://github.com/lloda/guile-raw-strings/actions/workflows/guile-3.0.yml/badge.svg)](https://github.com/lloda/guile-raw-strings/actions/workflows/guile-3.0.yml) [![guile-2.2](https://github.com/lloda/guile-raw-strings/actions/workflows/guile-2.2.yml/badge.svg)](https://github.com/lloda/guile-raw-strings/actions/workflows/guile-2.2.yml)
+
+`guile-raw-strings` is a reader extension for [GNU Guile](https://www.gnu.org/software/guile) that lets you write verbatim strings such as
 
     #R-(quotes " and escapes \ and newlines
                can " freely be used " here)-
