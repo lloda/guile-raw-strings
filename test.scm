@@ -1,11 +1,5 @@
 ; -*- mode: scheme; coding: utf-8 -*-
-; (c) Daniel Llorens 2017, 2022
 ; Test reader extension for raw strings
-
-;; This library is free software; you can redistribute it and/or modify it under
-;; the terms of the GNU Lesser General Public License as published by the Free
-;; Software Foundation; either version 3 of the License, or (at your option) any
-;; later version.
 
 (import (raw-strings) (srfi srfi-26) (srfi srfi-64))
 (set! test-log-to-file #f)
