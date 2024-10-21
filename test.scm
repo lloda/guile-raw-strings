@@ -2,22 +2,14 @@
 ; Test reader extension for raw strings
 
 (import (raw-strings) (srfi srfi-26) (srfi srfi-64))
-(set! test-log-to-file #f)
 
 (define (test-reader s)
   (call-with-input-string s
     (cute (@@ (raw-strings) reader-extension-raw-string) #\R <>)))
-(define-syntax test-error-properly
-  (syntax-rules ()
-    ((_ tag expr)
-     (begin
-       (test-error tag expr)
-       (let ((r (test-result-ref (test-runner-current) 'actual-error)))
-         (test-equal tag (car r)))))))
 
 (test-begin "raw-strings")
-(test-error-properly 'raw-string-delimiter-not-found (test-reader "xxx||"))
-(test-error-properly 'end-of-file-reading-raw-string (test-reader "xxx(thest|\"ring)xx"))
+(test-error 'raw-string-delimiter-not-found (test-reader "xxx||"))
+(test-error 'end-of-file-reading-raw-string (test-reader "xxx(thest|\"ring)xx"))
 (test-equal "thest|\"ring" (test-reader "xxx(thest|\"ring)xxx"))
 (test-equal "thestring)xxyTHENMORE" (test-reader "xxx(thestring)xxyTHENMORE)xxx"))
 (test-equal "zeroprefix" (test-reader "(zeroprefix)"))
